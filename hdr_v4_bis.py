@@ -20,7 +20,7 @@ def openImages(path, imageNames):
 def generateNewImage(imagesToMerge: list, center:int, stdDeviation: int, coefficient:int = 1):
     """This function merge together each pixel of the different images
     The coefficient or weight is gaussian function:
-    a * exp(-((pixel[i]-center)**2)/(2*stdDeviation**2)) TEST"""
+    a * exp(-((pixel[i]-center)**2)/(2*stdDeviation**2)) TEST2"""
     height, width = imagesToMerge[0].height, imagesToMerge[0].width
     finalImage = Image.new(mode="RGB", size=(width, height))
     for y in range(height):
