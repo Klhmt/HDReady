@@ -35,10 +35,10 @@ def generateNewImage(imagesToMerge: list, center:int, stdDeviation: int, coeffic
             try:
                 bestPixel = round(bestPixel[0] / bestPixel[1])
             except ZeroDivisionError:
-                bestPixel = round(bestPixel)
+                bestPixel = round(bestPixel[0])
             bestPixel = (bestPixel, bestPixel, bestPixel)
             finalImage.putpixel((x, y), bestPixel)
-    finalImage.save(r"C:\Users\cjacq\Documents\Clément\Perso\Programmation\Photo_samples\hdr_v4bis_bw_50.png")
+    finalImage.save(r"C:\Users\cjacq\Documents\Clément\Perso\Programmation\Photo_samples\hdr_v4bis_bw_120.png")
 
 
 
@@ -49,6 +49,6 @@ def generateNewImage(imagesToMerge: list, center:int, stdDeviation: int, coeffic
 
 #i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('1120716.jpg', '1120717.jpg', '1120718.jpg', '1120719.jpg', '1120720.jpg', '1120721.jpg', '1120722.jpg'))
 i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('P1130264.png', 'P1130265.png', 'P1130266.png', 'P1130267.png', 'P1130268.png', 'P1130269.png', 'P1130263.png'))
-generateNewImage(i, 127, 50)
+generateNewImage(i, 127, 120)
 
 
