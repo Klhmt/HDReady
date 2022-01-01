@@ -32,9 +32,12 @@ def generateNewImage(imagesToMerge: list, center:int, stdDeviation: int, coeffic
                 if 10 <= brightness <= 180:
                     bestPixel[0] += brightness * coefficient * exp(-((brightness-center)**2)/(2*stdDeviation**2))   # brightness value * coefficient
                     bestPixel[1] += coefficient * exp(-((brightness-center)**2)/(2*stdDeviation**2))    # Coefficient
-            bestPixel = round(bestPixel[0] / bestPixel[1])
+            try:
+                bestPixel = round(bestPixel[0] / bestPixel[1])
+            except ZeroDivisionError:
+                bestPixel = bestPixel
             finalImage.putpixel((x, y), (bestPixel, bestPixel, bestPixel))
-    finalImage.save(r"C:\Users\cjacq\Documents\Clément\Perso\Programmation\Photo_samples\hdr_v4bis_bornes_underexposed.png")
+    finalImage.save(r"C:\Users\cjacq\Documents\Clément\Perso\Programmation\Photo_samples\hdr_v4bis_bw_50.png")
 
 
 
