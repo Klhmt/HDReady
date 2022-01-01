@@ -37,7 +37,7 @@ def generateNewImage(imagesToMerge: list, center:int, stdDeviation: int, coeffic
             except ZeroDivisionError:
                 bestPixel = round(bestPixel)
             bestPixel = (bestPixel, bestPixel, bestPixel)
-            finalImage.putpixel((x, y), (bestPixel, bestPixel, bestPixel))
+            finalImage.putpixel((x, y), bestPixel)
     finalImage.save(r"C:\Users\cjacq\Documents\Clément\Perso\Programmation\Photo_samples\hdr_v4bis_bw_50.png")
 
 
