@@ -20,7 +20,7 @@ def openImages(path, imageNames):
 def generateNewImage(imagesToMerge: list, center:int, stdDeviation: int, coefficient:int = 1):
     """This function merge together each pixel of the different images
     The coefficient or weight is gaussian function:
-    a * exp(-((pixel[i]-center)**2)/(2*stdDeviation**2)) TEST2"""
+    a * exp(-((pixel[i]-center)**2)/(2*stdDeviation**2))"""
     height, width = imagesToMerge[0].height, imagesToMerge[0].width
     finalImage = Image.new(mode="RGB", size=(width, height))
     for y in range(height):
@@ -32,16 +32,8 @@ def generateNewImage(imagesToMerge: list, center:int, stdDeviation: int, coeffic
                 if 10 <= brightness <= 180:
                     bestPixel[0] += brightness * coefficient * exp(-((brightness-center)**2)/(2*stdDeviation**2))   # brightness value * coefficient
                     bestPixel[1] += coefficient * exp(-((brightness-center)**2)/(2*stdDeviation**2))    # Coefficient
-            try:
-                bestPixel = round(bestPixel[0] / bestPixel[1])
-                delta = round(abs(brightness - bestPixel))
-            except ZeroDivisionError:
-                delta = 0
-
-            if brightness >= 127:
-                pixel = (pixel[0] - delta, pixel[1] - delta, pixel[2] - delta)
-            pixel = (pixel[0] + delta, pixel[1] + delta, pixel[2] + delta)
-            finalImage.putpixel((x, y), pixel)
+            bestPixel = round(bestPixel[0] / bestPixel[1])
+            finalImage.putpixel((x, y), (bestPixel, bestPixel, bestPixel))
     finalImage.save(r"C:\Users\cjacq\Documents\Clément\Perso\Programmation\Photo_samples\hdr_v4bis_bornes_underexposed.png")
 
 
@@ -52,7 +44,7 @@ def generateNewImage(imagesToMerge: list, center:int, stdDeviation: int, coeffic
 #i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('img2.jpg', 'img3.jpg', 'img4.jpg','img5.jpg', 'img6.jpg', 'img7.jpg', 'img1.jpg'))
 
 #i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('1120716.jpg', '1120717.jpg', '1120718.jpg', '1120719.jpg', '1120720.jpg', '1120721.jpg', '1120722.jpg'))
-    i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('P1130264.png', 'P1130265.png', 'P1130266.png', 'P1130267.png', 'P1130268.png', 'P1130269.png', 'P1130263.png'))
-generateNewImage(i, 127, 20)
+i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('P1130264.png', 'P1130265.png', 'P1130266.png', 'P1130267.png', 'P1130268.png', 'P1130269.png', 'P1130263.png'))
+generateNewImage(i, 127, 50)
 
 
