@@ -3,7 +3,7 @@ This is a HDR software fully written in Python. This is a project in development
 
 ## What's the purpose of this project?
 
-A DSLR camera has a limited dynamic range. When there are some dark and very bright things in the same scene some parts of your image will be over/underexposeded. This programs aims at merging a few **static** bracketed images.
+A DSLR camera has a limited dynamic range. When there are some dark and very bright things in the same scene some parts of your image will be over/underexposeded. This programs aims at merging a few **static** bracketed images to have a high dynamic range image.
 
 ## The program
 
