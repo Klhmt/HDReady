@@ -1,5 +1,5 @@
 # HDReady
-This is a HDR software fully written in Python. This is a project in development, your help will always be appreciated!
+DHReady is an image merging software fully written in Python. This is a project in development, your help will always be appreciated!
 
 ## What's the purpose of this project?
 
