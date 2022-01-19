@@ -2,7 +2,6 @@ from PIL import Image
 from math import exp
 import timeit
 from statistics import stdev
-from matplotlib.pyplot import plot, show, legend
 
 def openImages(path, imageNames):
     """This function open and store the images to merge
@@ -10,7 +9,7 @@ def openImages(path, imageNames):
         path (str): path of the folder that contains the images
         imageNames (tuple): contains the name of files
     Ex:
-        path = 'C:/Users/John/Python/'
+        path = 'C:/Users/John/myImage/'
         imageNames = ('img1.png', 'img2.png', 'offroad.png')
     """
     images = []
@@ -59,17 +58,22 @@ def gaussian(value, stdDeviation):
     return exp(-(((value-127)**2)/(2*(stdDeviation**2))))
 
 def generateNewImage(imagesToMerge: list):
-    """This function merges images into a new one. WIP"""
+    """This function merges images into a new one
+    Arg:
+        imagesToMerge (list): list containing the input images"""
     height, width = imagesToMerge[0].height, imagesToMerge[0].width
     finalImage = Image.new(mode="RGB", size=(width, height))
     for y in range(height):
         for x in range(width):
             coefficient = []
+            pixels = []
+            newPixel = [0, 0, 0]
             # Compute coefficients
             for image in imagesToMerge:
                 r, g, b = image.getpixel((x, y))
-                #coefficient.append(saturation_measure(r, g, b) * exposition_measure(r, g, b, 5, 100))
-                coefficient.append(exposition_measure(r, g, b, 100))
+                pixels.append((r, g, b))
+                coefficient.append(saturation_measure(r, g, b) * exposition_measure(r, g, b, 250, 1))
+                #coefficient.append(exposition_measure(r, g, b, 35))
             sum_coeff = sum(coefficient)
             # Normalization of coefficient values
             for z in range(len(coefficient)):
@@ -78,37 +82,23 @@ def generateNewImage(imagesToMerge: list):
                 except ZeroDivisionError:
                     coefficient[z] = 0
             # Merging images => WIP 
-            newPixel = [0, 0, 0]
-            for coeff in coefficient:
-                newPixel[0] += r * coeff
-                newPixel[1] += g * coeff
-                newPixel[2] += b * coeff
+            for i in range(len(coefficient)):
+                newPixel[0] += pixels[i][0] * coefficient[i]
+                newPixel[1] += pixels[i][1] * coefficient[i]
+                newPixel[2] += pixels[i][2] * coefficient[i]
             # Rounding values
             for a in range(3):
                 newPixel[a] = round(newPixel[a])
             newPixel = tuple(newPixel)
             # Write new rgb values into the final image
             finalImage.putpixel((x, y), newPixel)
-    finalImage.save(r"C:\Users\cjacq\Documents\Clément\Perso\Programmation\Photo_samples\hdr_paper_100_7img_no_saturation.png")
+    finalImage.save(r"C:\Users\cjacq\Documents\Clément\Perso\Programmation\Photo_samples\hdr_paper_clavier_250_new_merge.png")
 
 
 # Try
 #i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('img6.jpg', 'img5.jpg','img3.jpg'))
-i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('img2.jpg', 'img3.jpg', 'img4.jpg','img5.jpg', 'img6.jpg', 'img7.jpg', 'img1.jpg'))
-
+#i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('img2.jpg', 'img3.jpg', 'img4.jpg','img5.jpg', 'img6.jpg', 'img7.jpg', 'img1.jpg'))
+i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('clavier1_comp.jpg', 'clavier2_comp.jpg'))
 #i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('1120716.jpg', '1120717.jpg', '1120718.jpg', '1120719.jpg', '1120720.jpg', '1120721.jpg', '1120722.jpg'))
-#i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('P1130264.png', 'P1130265.png', 'P1130266.png', 'P1130267.png', 'P1130268.png', 'P1130269.png', 'P1130263.png'))
+#i = openImages('C:/Users/cjacq/Documents/Clément/Perso/Programmation/Photo_samples/', ('clavier1_comp.jpg', 'clavier2_comp.jpg'))
 generateNewImage(i)
-
-"""
-x = [i for i in range(256)]
-y = [2*gaussian(x, 20) for x in range(256)]
-z = [2*gaussian(x, 20) for x in range(256)]
-k = [2*gaussian(x, 50) for x in range(256)]
-l = [2*gaussian(x, 20) for x in range(256)]
-
-plot(x, z, color='orange', label='2-35')
-
-plot(x, l, color='red')
-legend()
-show()"""
