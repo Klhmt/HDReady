@@ -15,5 +15,18 @@ If you want to know more about HDR and image merging the following papaer is a g
 ## Performance
 
 I'll update the results of my testing as long as the program/algorithm keeps evolving.
-As I want to use this program to merge the images I take with my DSLR camera, I will optimize the algorithm as far as possible.
-3 x 4592 x 3448 images take ... to compute WIP
+As I want to use this program to merge the images I take with my DSLR camera, I will optimize the algorithm as far as possible.\
+7 x 4600 x 3456 images take around 6 minutes to compute.\
+3 x 4600 x 3456 images take around 3 minutes to compute.\
+The previous results have been obtained with a Ryzen 5 2600X.
+
+## RAM Consumption
+
+The python script was started from command line (not with an IDE).\
+With 3 x 60 Mo loaded images the merging algorithm represents 260 Mo.\
+With 7 x 70 Mo loaded images the merging algorithm represents 500 Mo.
+
+## CPU Performance
+
+The python script was started from command line (not with an IDE).\
+The merging algorithm in full load consumes 8 to 10% of my Ryzen 5 2600X CPU.
