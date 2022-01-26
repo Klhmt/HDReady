@@ -9,6 +9,8 @@ The fusion algorithm is based on that paper: https://web.stanford.edu/class/cs23
 ## The program
 
 Pillow is used to manipulate images.
+To merge the images, we find a weight for each channel of each pixel of each image according to its well-exposedness. We use a Gaussian curve centered in 127 to find the weight.
+In order not to compute same weights many times - a same input gives a same output - the weight are already computed and stored into a file that is loaded on the program.
 
 If you want to know more about HDR and image merging the following papaer is a gold mine: [NVIDIA_hdr_algorithms](https://research.nvidia.com/sites/default/files/publications/Gallo-Sen_StackBasedHDR_2016.pdf)
 
@@ -28,5 +30,5 @@ With 7 x 70 Mo loaded images the merging algorithm represents 500 Mo.
 
 ## CPU Performance
 
-The python script was started from command line (not with an IDE).\
+The Python script was started from command line (not with an IDE).\
 The merging algorithm in full load consumes 8 to 10% of my Ryzen 5 2600X CPU.
