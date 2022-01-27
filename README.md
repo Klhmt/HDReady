@@ -14,7 +14,7 @@ In order not to compute same weights many times - a same input gives a same outp
 
 If you want to know more about HDR and image merging in general the following paper is a gold mine: [NVIDIA_hdr_algorithms](https://research.nvidia.com/sites/default/files/publications/Gallo-Sen_StackBasedHDR_2016.pdf)
 
-## Performance
+## Execution time
 
 I'll update the results of my testing as long as the program/algorithm keeps evolving.
 As I want to use this program to merge the images I take with my DSLR camera, I will optimize the algorithm as far as possible.\
