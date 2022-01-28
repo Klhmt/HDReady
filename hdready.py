@@ -6,7 +6,6 @@ from os import listdir
 from os.path import isfile, join, dirname
 import fire
 
-# Variable
 coeff = None
 
 # Functions
