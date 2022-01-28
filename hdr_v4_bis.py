@@ -1,8 +1,9 @@
 from PIL import Image
 from math import exp
 import pickle
+import os
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, dirname
 import fire
 
 # Variable
@@ -83,9 +84,9 @@ def start(imagesFolderPath: str, finalPath: str, stdDeviation: int = 100, multip
     """
     global coeff
     try:
-        coeff = pickle.load(
-            open(r'C:\Users\cjacq\Documents\Clément\Perso\Programmation\HDReady\coeff{}'.format(stdDeviation),'rb')
-                )
+        path = os.path.join(os.path.dirname(__file__), "coeff{}".format(stdDeviation))
+        with open(path, 'rb') as f:
+            coeff = pickle.load(f)
         images = openImages(imagesFolderPath)
         generateNewImage(images, finalPath, multiplier)
         print('HDR merging completed')
