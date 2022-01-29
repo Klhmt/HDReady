@@ -35,6 +35,7 @@ def exposition_measure(channels, stdDeviation, multiplier: int = 1):
         multiplier (int): multiplier
     Return:
         coeff (int): exposure weight of the pixel"""
+    global coeff
     channels = list(channels)
     weight = 1
     for x in range(3):
