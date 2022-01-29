@@ -1,10 +1,11 @@
-from PIL import Image
 from math import exp
 import os
+
 import pickle
+import fire
+from PIL import Image
 from os import listdir
 from os.path import isfile, join, dirname
-import fire
 
 coeff = None
 
@@ -58,7 +59,9 @@ def generateNewImage(imagesToMerge: list, finalPath: str, multiplier: int = 1):
             for image in imagesToMerge:
                 channels = image.getpixel((x, y))
                 pixels.append(channels)
-                coefficient.append(exposition_measure(channels, 250, multiplier))
+                coefficient.append(
+                    exposition_measure(channels, 250, multiplier)
+                    )
             sum_coeff = sum(coefficient)
             # Normalization of coefficient values
             for z in range(len(coefficient)):
@@ -66,7 +69,7 @@ def generateNewImage(imagesToMerge: list, finalPath: str, multiplier: int = 1):
                     coefficient[z] /= sum_coeff
                 except ZeroDivisionError:
                     pass
-            # Merging 
+            # Merging
             for i in range(len(coefficient)):
                 for n in range(3):
                     newPixel[n] += pixels[i][n] * coefficient[i]
@@ -78,20 +81,24 @@ def generateNewImage(imagesToMerge: list, finalPath: str, multiplier: int = 1):
     finalImage.save(finalPath)
 
 
-def start(imagesFolderPath: str, finalPath: str, stdDeviation: int = 100, multiplier:int = 1):
+def start(imagesFolderPath: str, finalPath: str,
+          stdDeviation: int = 100, multiplier: int = 1):
     """This function launches the merging process
     Args:
-        imagesFolderPath (str): path of the folder that contains the images to merge
-        finalPath (str): complete path of the output merged image 
+        imagesFolderPath (str): path of the folder that contains the images
+        to merge
+        finalPath (str): complete path of the output merged image
             (eg: 'C:\\Users\\Tim\\Images\\hdr_bridge.png')
-        stdDeviation (int): standart deviation of the gaussian curve used a weight generator.
-            This parameter can be from 10 to 150 with a step of 10
+        stdDeviation (int): standart deviation of the gaussian curve used
+            a weight generator. This parameter can be from 10 to 150
+            with a step of 10
         multiplier (int): multiplier of the weight of each pixel"""
     global coeff
     # Check if the folder containing the images exists or not
     if os.path.isdir(imagesFolderPath):
         # Opening of the coeffxx file
-        path = os.path.join(os.path.dirname(__file__), "coeff{}".format(stdDeviation))
+        path = os.path.join(
+            os.path.dirname(__file__), "coeff{}".format(stdDeviation))
         with open(path, 'rb') as f:
             coeff = pickle.load(f)
         images = openImages(imagesFolderPath)
