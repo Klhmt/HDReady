@@ -62,7 +62,10 @@ def generateNewImage(imagesToMerge: list, finalPath: str, multiplier: int = 1):
             sum_coeff = sum(coefficient)
             # Normalization of coefficient values
             for z in range(len(coefficient)):
-                coefficient[z] /= sum_coeff
+                try:
+                    coefficient[z] /= sum_coeff
+                except ZeroDivisionError:
+                    pass
             # Merging 
             for i in range(len(coefficient)):
                 for n in range(3):
