@@ -1,28 +1,31 @@
 from PIL import Image
 from math import exp
-import pickle
 import os
+import pickle
 from os import listdir
 from os.path import isfile, join, dirname
 import fire
 
 coeff = None
 
+
 # Functions
 def openImages(imagesFolderPath):
     """This function open and store the images to merge
     Args:
-        imagesFolderPath (str): path of the folder that contains the images to merge
-        Ex: imagesFolderPath = 'C:/Users/John/myImage/bracketed_images_bridge/'
+        imagesFolderPath (str): path of the folder containing the images
+        Ex: 'C:/Users/John/myImage/bracketed_images_bridge/'
     """
     images = []
-    imagesPath = [f for f in listdir(imagesFolderPath) if isfile(join(imagesFolderPath, f))]
+    imagesPath = [
+        f for f in listdir(imagesFolderPath)
+        if isfile(join(imagesFolderPath, f))]
     for name in imagesPath:
-        images.append(Image.open(imagesFolderPath + name))
+        images.append(Image.open(os.path.join(imagesFolderPath, name)))
     return images
 
 
-def exposition_measure(channels, stdDeviation, multiplier: int=1):
+def exposition_measure(channels, stdDeviation, multiplier: int = 1):
     """This function measures the exposition of a given pixel
     and apply a Gauss curve to it
     Args:
@@ -38,7 +41,7 @@ def exposition_measure(channels, stdDeviation, multiplier: int=1):
     return weight
 
 
-def generateNewImage(imagesToMerge: list, finalPath: str, multiplier: int=1):
+def generateNewImage(imagesToMerge: list, finalPath: str, multiplier: int = 1):
     """This function merges images into a new one
     Arg:
         imagesToMerge (list): list containing the input images
@@ -60,7 +63,7 @@ def generateNewImage(imagesToMerge: list, finalPath: str, multiplier: int=1):
             # Normalization of coefficient values
             for z in range(len(coefficient)):
                 coefficient[z] /= sum_coeff
-            # Merging images => WIP 
+            # Merging 
             for i in range(len(coefficient)):
                 for n in range(3):
                     newPixel[n] += pixels[i][n] * coefficient[i]
@@ -73,24 +76,32 @@ def generateNewImage(imagesToMerge: list, finalPath: str, multiplier: int=1):
 
 
 def start(imagesFolderPath: str, finalPath: str, stdDeviation: int = 100, multiplier:int = 1):
-    """This function open the appropriate dictionary file
-    and proceed to the images fusion
+    """This function launches the merging process
     Args:
-        imagesFolderPath : path of the folder that contains the images to merge
-        finalPath : complete path of the output merged image (eg: 'C:\\Users\\Tim\\Images\\hdr_bridge.png')
-        stdDeviation : standart deviation of the gaussian curve used a weight generator
-        multiplier : multiplier of the weight of each pixel
-    """
+        imagesFolderPath (str): path of the folder that contains the images to merge
+        finalPath (str): complete path of the output merged image 
+            (eg: 'C:\\Users\\Tim\\Images\\hdr_bridge.png')
+        stdDeviation (int): standart deviation of the gaussian curve used a weight generator.
+            This parameter can be from 10 to 150 with a step of 10
+        multiplier (int): multiplier of the weight of each pixel"""
     global coeff
-    try:
+    # Check if the folder containing the images exists or not
+    if os.path.isdir(imagesFolderPath):
+        # Opening of the coeffxx file
         path = os.path.join(os.path.dirname(__file__), "coeff{}".format(stdDeviation))
         with open(path, 'rb') as f:
             coeff = pickle.load(f)
         images = openImages(imagesFolderPath)
-        generateNewImage(images, finalPath, multiplier)
-        print('HDR merging completed')
-    except FileNotFoundError as er:
-        print('Error :', er)
+    else:
+        raise FileNotFoundError
+    # Check if the folder contains images:
+    if len(os.listdir(imagesFolderPath)) == 0:
+        raise Exception("There is no image in the folder!")
+    # Check if the final directory exists and create it if it doesn't
+    if not os.path.exists(os.path.dirname(finalPath)):
+        os.makedirs(os.path.dirname(finalPath))
+    generateNewImage(images, finalPath)
+    print('HDR merging completed')
 
 
 fire.Fire(start)
