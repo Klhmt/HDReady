@@ -14,6 +14,14 @@ The contrast and saturation measures are not yet implemented because of performa
 
 If you want to know more about HDR and image merging in general the following paper is a gold mine: [NVIDIA_hdr_algorithms](https://research.nvidia.com/sites/default/files/publications/Gallo-Sen_StackBasedHDR_2016.pdf)
 
+## How to use
+
+Get code files.\
+Open a terminal from the same folder as the python script.\
+Then type: ```python hdready.py [path of the folder that contains the images to merge] [path of the future output image] [standartDeviation]```\
+Example: ```python hdready.py C:\Tim\Images\ToMerge\bridge\ C:\Tim\Images\bridge_merged.jpg 100```\
+Standart deviation parameter must be an integer between 10 and 150 with a step of 10 (10 or 20 or 30 ... 140 or 150). This parameter directly impact the results of the merging algorithm. **The smaller the value, the greater the dynamic range**. However, if the value is too small there will be artifacts. You have to choose the right value for a balanced result.
+
 ## Execution time
 
 I'll update the results of my testing as long as the program/algorithm keeps evolving.
