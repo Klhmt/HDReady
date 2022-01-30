@@ -26,12 +26,11 @@ def openImages(imagesFolderPath):
     return images
 
 
-def exposition_measure(channels, stdDeviation, multiplier: int = 1):
+def exposition_measure(channels, multiplier: int = 1):
     """This function measures the exposition of a given pixel
     and apply a Gauss curve to it
     Args:
         channels (tuple): tuple that contains red, green and blue channel
-        stdDeviation (int): standart deviation, parameter of the Gaussian curve
         multiplier (int): multiplier
     Return:
         coeff (int): exposure weight of the pixel"""
@@ -61,7 +60,7 @@ def generateNewImage(imagesToMerge: list, finalPath: str, multiplier: int = 1):
                 channels = image.getpixel((x, y))
                 pixels.append(channels)
                 coefficient.append(
-                    exposition_measure(channels, 250, multiplier)
+                    exposition_measure(channels, multiplier)
                     )
             sum_coeff = sum(coefficient)
             # Normalization of coefficient values
