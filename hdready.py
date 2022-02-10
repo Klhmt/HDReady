@@ -21,68 +21,55 @@ def openImages(imagesFolderPath):
     imagesPath = [
         f for f in listdir(imagesFolderPath)
         if isfile(join(imagesFolderPath, f))]
-    for name in imagesPath:
-        images.append(Image.open(os.path.join(imagesFolderPath, name)))
+    images = [Image.open(os.path.join(imagesFolderPath, name)) 
+             for name in imagesPath]
     return images
 
 
-def exposition_measure(channels, multiplier: int = 1):
+def exposition_measure(channels):
     """This function measures the exposition of a given pixel
     and apply a Gauss curve to it
-    Args:
+    Arg:
         channels (tuple): tuple that contains red, green and blue channel
-        multiplier (int): multiplier
     Return:
         coeff (int): exposure weight of the pixel"""
     global coeff
-    channels = list(channels)
     weight = 1
     for x in range(3):
-        weight *= multiplier * coeff[channels[x]]
+        weight *= coeff[channels[x]]
     return weight
 
 
-def generateNewImage(imagesToMerge: list, finalPath: str, multiplier: int = 1):
+def generateNewImage(imagesToMerge: list, finalPath: str):
     """This function merges images into a new one
     Arg:
         imagesToMerge (list): list containing the input images
-        finalPath (str): path of the final merged image
-        multiplier (int): multiplier of the weight of each pixel"""
+        finalPath (str): path of the final merged image"""
     height, width = imagesToMerge[0].height, imagesToMerge[0].width
     finalImage = Image.new(mode="RGB", size=(width, height))
     for y in range(height):
         for x in range(width):
-            coefficient = []
-            pixels = []
             newPixel = [0, 0, 0]
             # Compute coefficients
-            for image in imagesToMerge:
-                channels = image.getpixel((x, y))
-                pixels.append(channels)
-                coefficient.append(
-                    exposition_measure(channels, multiplier)
-                    )
+            pixels = [image.getpixel((x, y)) for image in imagesToMerge]
+            coefficient = [exposition_measure(rgb) for rgb in pixels]
             sum_coeff = sum(coefficient)
             # Normalization of coefficient values
-            for z in range(len(coefficient)):
-                try:
-                    coefficient[z] /= sum_coeff
-                except ZeroDivisionError:
-                    pass
+            coefficient = [c / sum_coeff if sum_coeff != 0 
+                          else c for c in coefficient]
             # Merging
             for i in range(len(coefficient)):
                 for n in range(3):
                     newPixel[n] += pixels[i][n] * coefficient[i]
             # Rounding values
-            for a in range(3):
-                newPixel[a] = round(newPixel[a])
+            newPixel = tuple([round(a) for a in newPixel])
             # Write new rgb values into the final image
-            finalImage.putpixel((x, y), tuple(newPixel))
+            finalImage.putpixel((x, y), newPixel)
     finalImage.save(finalPath)
 
 
 def start(imagesFolderPath: str, finalPath: str,
-          stdDeviation: int = 100, multiplier: int = 1):
+          stdDeviation: int = 100):
     """This function launches the merging process
     Args:
         imagesFolderPath (str): path of the folder that contains the images
@@ -91,8 +78,7 @@ def start(imagesFolderPath: str, finalPath: str,
             (eg: 'C:\\Users\\Tim\\Images\\hdr_bridge.png')
         stdDeviation (int): standart deviation of the gaussian curve used
             a weight generator. This parameter can be from 10 to 150
-            with a step of 10
-        multiplier (int): multiplier of the weight of each pixel"""
+            with a step of 10"""
     global coeff
     # Check if the folder containing the images exists or not
     if os.path.isdir(imagesFolderPath):
