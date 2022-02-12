@@ -26,7 +26,7 @@ Standart deviation parameter must be an integer between 10 and 150 with a step o
 
 I'll update the results of my testing as long as the program/algorithm keeps evolving.
 As I want to use this program to merge the images I take with my DSLR camera, I will optimize the algorithm as far as possible.\
-7 x 4600 x 3456 images take around 6 minutes to compute.\
+7 x 4600 x 3456 images take around 5 minutes to compute.\
 3 x 4600 x 3456 images take around 3 minutes to compute.\
 The previous results have been obtained with a Ryzen 5 2600X.
 
