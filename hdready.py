@@ -11,11 +11,22 @@ coeff = None
 
 
 # Functions
-def openImages(imagesFolderPath):
-    """This function open and store the images to merge
+def generate_dictionnary(stdDeviation: int)->'coefficient dictionnary':
+    """This function generates a dictionnary that associates the weight 
+    of a pixel channel and it's weight
+    Arg:
+        stdDeviation: parameter of the Gaussian function
+    Return:
+        (dict): dictonnary of weigths"""
+    return {value: round((exp(-((value-127)**2)/(2*stdDeviation**2))), 6) 
+           for value in range(0, 256)}
+
+
+def open_images(imagesFolderPath:str)->'list containing images':
+    """This function open and store the images to merge into a list
     Args:
         imagesFolderPath (str): path of the folder containing the images
-        Ex: 'C:/Users/John/myImage/bracketed_images_bridge/'
+        e.g. 'C:/Users/John/myImage/bracketed_images_bridge/'
     """
     images = []
     imagesPath = [
@@ -26,9 +37,9 @@ def openImages(imagesFolderPath):
     return images
 
 
-def exposition_measure(channels):
+def exposition_measure(channels:tuple)->'weight':
     """This function measures the exposition of a given pixel
-    and apply a Gauss curve to it
+    and apply a Gauss curve to compute the weight
     Arg:
         channels (tuple): tuple that contains red, green and blue channel
     Return:
@@ -40,8 +51,8 @@ def exposition_measure(channels):
     return weight
 
 
-def generateNewImage(imagesToMerge: list, finalPath: str):
-    """This function merges images into a new one
+def generate_new_image(imagesToMerge: list, finalPath: str):
+    """This function merges the images into a new one and save it
     Arg:
         imagesToMerge (list): list containing the input images
         finalPath (str): path of the final merged image"""
@@ -70,24 +81,30 @@ def generateNewImage(imagesToMerge: list, finalPath: str):
 
 def start(imagesFolderPath: str, finalPath: str,
           stdDeviation: int = 100):
-    """This function launches the merging process
+    """This function launches the merging process. stdDeviation parameter is
+    used to compute the weight of a given pixel. The smaller the value, the
+    greater the dynamic range.
+
     Args:
         imagesFolderPath (str): path of the folder that contains the images
         to merge
         finalPath (str): complete path of the output merged image
-            (eg: 'C:\\Users\\Tim\\Images\\hdr_bridge.png')
+            (e.g. 'C:\\Users\\Tim\\Images\\hdr_bridge.png')
         stdDeviation (int): standart deviation of the gaussian curve used
             a weight generator. This parameter can be from 10 to 150
-            with a step of 10"""
+            with a step of 10
+    
+    Raises:
+        FileNotFoundError: if the specified path of the folder is incorrect
+        Exception: if there is no image to compute in the folder
+
+    """
     global coeff
     # Check if the folder containing the images exists or not
     if os.path.isdir(imagesFolderPath):
-        # Opening of the coeffxx file
-        path = os.path.join(
-            os.path.dirname(__file__), "coeff{}".format(stdDeviation))
-        with open(path, 'rb') as f:
-            coeff = pickle.load(f)
-        images = openImages(imagesFolderPath)
+        # Generating the coeff dictionnary and opening the images to merge
+        coeff = generate_dictionnary(stdDeviation)
+        images = open_images(imagesFolderPath)
     else:
         raise FileNotFoundError
     # Check if the folder contains images:
@@ -96,7 +113,7 @@ def start(imagesFolderPath: str, finalPath: str,
     # Check if the final directory exists and create it if it doesn't
     if not os.path.exists(os.path.dirname(finalPath)):
         os.makedirs(os.path.dirname(finalPath))
-    generateNewImage(images, finalPath)
+    generate_new_image(images, finalPath)
     print('HDR merging completed')
 
 
