@@ -3,7 +3,7 @@ HDReady is an image merging software fully written in Python. This is a project 
 
 ## What's the purpose of this project?
 
-A DSLR camera has a limited dynamic range. When there are some dark and very bright areas in the same scene some parts of your image will be over/underexposeded. This programs aims at merging a few **static** bracketed images to have a high dynamic range image.
+A DSLR camera has a limited dynamic range. When there are some dark and very bright areas in the same scene some parts of your image will be over/underexposeded. This programs aims at merging a few **static** bracketed images to produce a high dynamic range image.
 
 ## The program
 
