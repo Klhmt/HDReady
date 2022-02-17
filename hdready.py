@@ -6,8 +6,11 @@ import fire
 from PIL import Image
 from os import listdir
 from os.path import isfile, join, dirname
+from multiprocessing import Pool
 
 coeff = None
+width = None
+height = None
 
 
 # Functions
@@ -51,12 +54,15 @@ def exposition_measure(channels:tuple)->'weight':
     return weight
 
 
-def generate_new_image(imagesToMerge: list, finalPath: str):
-    """This function merges the images into a new one and save it
+def generate_new_image(imagesToMerge: list):
+    """This function merges the images into a new one
     Arg:
         imagesToMerge (list): list containing the input images
-        finalPath (str): path of the final merged image"""
-    height, width = imagesToMerge[0].height, imagesToMerge[0].width
+    Return:
+        finalImage (image object): a part of the final image
+    """
+    global width
+    global height
     finalImage = Image.new(mode="RGB", size=(width, height))
     for y in range(height):
         for x in range(width):
@@ -76,7 +82,40 @@ def generate_new_image(imagesToMerge: list, finalPath: str):
             newPixel = tuple([round(a) for a in newPixel])
             # Write new rgb values into the final image
             finalImage.putpixel((x, y), newPixel)
-    finalImage.save(finalPath)
+    return finalImage
+
+def images_crop(imagesToMerge:list):
+    """This function cuts the images in 2 parts
+    Arg:
+        imagesToMerge (list): list containing images objects
+    """
+    global width
+    global height
+    return [
+        [img.crop((0, 0, width/2, height)) for img in imagesToMerge],
+        [img.crop((width/2, 0, width, height)) for img in imagesToMerge] 
+    ]
+        
+
+def images_reassemble(imagesToStick:list):
+    """This function reassembles the parts of the final image
+    Arg:
+        imagesToStick (list): contains the pieces of the final image
+    Return:
+        (image object): final image
+    WIP
+    """
+    global width
+    global height
+    finalImage = finalImage = Image.new(mode="RGB", size=(width, height))
+    for x in range(width/2):
+        for y in range(height):
+            finalImage.putpixel((x, y), imagesToStick[0].getpixel((x, y)))
+    for x in range(width/2):
+        for y in range(height):
+            finalImage.putpixel(((width/2 + x), y), 
+                               imagesToStick[1].getpixel((x, y)))
+    return finalImage
 
 
 def start(imagesFolderPath: str, finalPath: str,
@@ -100,6 +139,8 @@ def start(imagesFolderPath: str, finalPath: str,
 
     """
     global coeff
+    global width
+    global height
     # Check if the folder containing the images exists or not
     if os.path.isdir(imagesFolderPath):
         # Generating the coeff dictionnary and opening the images to merge
@@ -113,7 +154,19 @@ def start(imagesFolderPath: str, finalPath: str,
     # Check if the final directory exists and create it if it doesn't
     if not os.path.exists(os.path.dirname(finalPath)):
         os.makedirs(os.path.dirname(finalPath))
-    generate_new_image(images, finalPath)
+    # Declaring the size of the images
+    width, height = images[0].width, images[0].height
+    # Division of the images
+    divided_images = images_crop(images)
+    # Multiprocessing
+    if __name__ == '__main__':
+        with Pool(2) as p:
+            pieces_of_final_images = p.map(generate_new_image, divided_images)
+    # Reassemble the pieces of the final image
+    finalImage = images_reassemble(pieces_of_final_images)
+    # Saving the final image
+    finalImage.save(finalPath)
+    # End message
     print('HDR merging completed')
 
 
