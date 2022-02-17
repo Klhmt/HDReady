@@ -3,6 +3,7 @@ import os
 
 import pickle
 import fire
+import numpy as np
 from PIL import Image
 from os import listdir
 from os.path import isfile, join, dirname
@@ -22,7 +23,7 @@ def generate_dictionnary(stdDeviation: int)->'coefficient dictionnary':
            for value in range(0, 256)}
 
 
-def open_images(imagesFolderPath:str)->'list containing images':
+def open_images(imagesFolderPath:str)->'list containing array images':
     """This function open and store the images to merge into a list
     Args:
         imagesFolderPath (str): path of the folder containing the images
@@ -32,7 +33,7 @@ def open_images(imagesFolderPath:str)->'list containing images':
     imagesPath = [
         f for f in listdir(imagesFolderPath)
         if isfile(join(imagesFolderPath, f))]
-    images = [Image.open(os.path.join(imagesFolderPath, name)) 
+    images = [np.array(Image.open(os.path.join(imagesFolderPath, name))) 
              for name in imagesPath]
     return images
 
@@ -56,18 +57,20 @@ def generate_new_image(imagesToMerge: list, finalPath: str):
     Arg:
         imagesToMerge (list): list containing the input images
         finalPath (str): path of the final merged image"""
-    height, width = imagesToMerge[0].height, imagesToMerge[0].width
-    finalImage = Image.new(mode="RGB", size=(width, height))
-    for y in range(height):
-        for x in range(width):
-            newPixel = [0, 0, 0]
+    # Creation of an array with the same dimension as input images
+    shape = imagesToMerge[0].shape
+    finalImage = np.empty(shape)
+    for y in range(shape[0]):
+        for x in range(shape[1]):
+            newPixel = np.array([0, 0, 0])
             # Compute coefficients
-            pixels = [image.getpixel((x, y)) for image in imagesToMerge]
-            coefficient = [exposition_measure(rgb) for rgb in pixels]
-            sum_coeff = sum(coefficient)
+            pixels = [image[x, y] for image in imagesToMerge]
+            coefficient = np.array([exposition_measure(rgb) 
+                                  for rgb in np.nditer(pixels)])
+            sum_coeff = np.sum(coefficient)
             # Normalization of coefficient values
-            coefficient = [c / sum_coeff if sum_coeff != 0 
-                          else c for c in coefficient]
+            coefficient = np.array([c / sum_coeff if sum_coeff != 0 
+                          else c for c in nditer(coefficient)])
             # Merging
             for i in range(len(coefficient)):
                 for n in range(3):
@@ -116,5 +119,5 @@ def start(imagesFolderPath: str, finalPath: str,
     generate_new_image(images, finalPath)
     print('HDR merging completed')
 
-
-fire.Fire(start)
+print(open_images(r'C:\Users\cjacq\Documents\Clément\Perso\Programmation\Photo_samples\sample5')[0].shape)
+print(open_images(r'C:\Users\cjacq\Documents\Clément\Perso\Programmation\Photo_samples\sample5')[0].ndim)
