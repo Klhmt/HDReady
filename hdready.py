@@ -107,14 +107,9 @@ def images_reassemble(imagesToStick:list):
     """
     global width
     global height
-    finalImage = finalImage = Image.new(mode="RGB", size=(width, height))
-    for x in range(width/2):
-        for y in range(height):
-            finalImage.putpixel((x, y), imagesToStick[0].getpixel((x, y)))
-    for x in range(width/2):
-        for y in range(height):
-            finalImage.putpixel(((width/2 + x), y), 
-                               imagesToStick[1].getpixel((x, y)))
+    finalImage = Image.new(mode="RGB", size=(width, height))
+    finalImage.paste(imagesToStick[0])
+    finalImage.paste(imagesToStick[1], (int(width/2), 0, width, height))
     return finalImage
 
 
@@ -161,11 +156,12 @@ def start(imagesFolderPath: str, finalPath: str,
     # Multiprocessing
     if __name__ == '__main__':
         with Pool(2) as p:
-            pieces_of_final_images = p.map(generate_new_image, divided_images)
+            #pieces_of_final_images = p.map(generate_new_image, divided_images)
+            print(p.map(generate_new_image, divided_images))
     # Reassemble the pieces of the final image
-    finalImage = images_reassemble(pieces_of_final_images)
+    #finalImage = images_reassemble(pieces_of_final_images)
     # Saving the final image
-    finalImage.save(finalPath)
+    #finalImage.save(finalPath)
     # End message
     print('HDR merging completed')
 
