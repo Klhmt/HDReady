@@ -13,13 +13,21 @@ The contrast and saturation measures are not yet implemented because of performa
 
 If you want to know more about HDR and image merging in general the following paper is a gold mine: [NVIDIA_hdr_algorithms](https://research.nvidia.com/sites/default/files/publications/Gallo-Sen_StackBasedHDR_2016.pdf)
 
+## How to install
+
+Download the code. You also need to install the following Python modules used by the program:
+- PIL: [PIL install guide](https://pillow.readthedocs.io/en/stable/installation.html)
+- Fire: [Fire install guide](https://google.github.io/python-fire/guide/)
+
 ## How to use
 
 Get code files.\
 Open a terminal from the same folder as the python script.\
-Then type: ```python hdready.py [path of the folder that contains the images to merge] [path of the future output image] [standartDeviation]```\
-Example: ```python hdready.py C:\Tim\Images\ToMerge\bridge\ C:\Tim\Images\bridge_merged.jpg 100```\
-Standart deviation parameter must be an integer between 10 and 150 with a step of 10 (10 or 20 or 30 ... 140 or 150). This parameter directly impact the results of the merging algorithm. **The smaller the value, the greater the dynamic range**. However, if the value is too small there will be artifacts. You have to choose the right value for a balanced result.
+Then type: ```python hdready.py [path of the folder that contains the images to merge] [path of the future output image] [standartDeviation] [number of processes]```\
+Example: ```python hdready.py C:\Tim\Images\ToMerge\bridge\ C:\Tim\Images\bridge_merged.jpg 100 4```\
+Notes:\
+Standart deviation parameter must be an integer between 10 and 150 with a step of 10 (10 or 20 or 30 ... 140 or 150). This parameter directly impact the results of the merging algorithm. **The smaller the value, the greater the dynamic range**. However, if the value is too small there will be artifacts. You have to choose the right value for a balanced result.\
+**The number of process is being implemented and is not working perfectly.**
 
 ## Execution time
 
@@ -28,6 +36,7 @@ As I want to use this program to merge the images I take with my DSLR camera, I 
 7 x 4600 x 3456 images take around 5 minutes to compute.\
 3 x 4600 x 3456 images take around 3 minutes to compute.\
 The previous results have been obtained with a Ryzen 5 2600X.
+Please note that these results have been obtained without using multiprocessing (only on one CPU core).
 
 ## RAM Consumption
 
@@ -39,6 +48,7 @@ With 7 x 70 Mo loaded images the merging algorithm represents 500 Mo.
 
 The Python script was started from command line (not with an IDE).\
 The merging algorithm in full load consumes 8 to 10% of my Ryzen 5 2600X CPU.
+Please note that these results have been obtained without using multiprocessing (only on one CPU core).
 
 ## Future fonctionnality
 
