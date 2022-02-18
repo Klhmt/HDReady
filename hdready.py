@@ -84,17 +84,22 @@ def generate_new_image(imagesToMerge: list):
             finalImage.putpixel((x, y), newPixel)
     return finalImage
 
-def images_crop(imagesToMerge:list):
-    """This function cuts the images in 2 parts
-    Arg:
+def images_crop(imagesToMerge:list, processes:int):
+    """This function cuts the images in processes parts WIP
+    Args:
         imagesToMerge (list): list containing images objects
+        processes (int): number of cores used by the fusion process and number
+            of parts of the images.
     """
     global width
     global height
-    return [
-        [img.crop((0, 0, width/2, height)) for img in imagesToMerge],
-        [img.crop((width/2, 0, width, height)) for img in imagesToMerge] 
-    ]
+    # Generation of the coordinates of the part of the images
+    parts = [(int(x*(1/processes)*width), 0, int((x+1)*(1/processes)), height)
+            for x in range(processes)]
+    if processes == 1:
+        return imagesToMerge
+    return [[img.crop(parts[x]) for img in imagesToMerge] 
+           for x in range(processes)]
         
 
 def images_reassemble(imagesToStick:list):
@@ -114,7 +119,7 @@ def images_reassemble(imagesToStick:list):
 
 
 def start(imagesFolderPath: str, finalPath: str,
-          stdDeviation: int = 100):
+         stdDeviation: int = 100, processes: int = 1):
     """This function launches the merging process. stdDeviation parameter is
     used to compute the weight of a given pixel. The smaller the value, the
     greater the dynamic range.
@@ -127,6 +132,8 @@ def start(imagesFolderPath: str, finalPath: str,
         stdDeviation (int): standart deviation of the gaussian curve used
             a weight generator. This parameter can be from 10 to 150
             with a step of 10
+        processes (int): number of processes to decrease the time of execution,
+            i.e. number of cores used by the merging algorithm
     
     Raises:
         FileNotFoundError: if the specified path of the folder is incorrect
@@ -156,12 +163,11 @@ def start(imagesFolderPath: str, finalPath: str,
     # Multiprocessing
     if __name__ == '__main__':
         with Pool(2) as p:
-            #pieces_of_final_images = p.map(generate_new_image, divided_images)
-            print(p.map(generate_new_image, divided_images))
+            pieces_of_final_images = p.map(generate_new_image, divided_images)
     # Reassemble the pieces of the final image
-    #finalImage = images_reassemble(pieces_of_final_images)
+    finalImage = images_reassemble(pieces_of_final_images)
     # Saving the final image
-    #finalImage.save(finalPath)
+    finalImage.save(finalPath)
     # End message
     print('HDR merging completed')
 
